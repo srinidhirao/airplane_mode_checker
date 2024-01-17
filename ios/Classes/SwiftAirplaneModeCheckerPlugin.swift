@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import Network
+import CoreTelephony
 
 @available(iOS 12.0, *)
 public class SwiftAirplaneModeCheckerPlugin: NSObject, FlutterPlugin {
@@ -25,6 +26,12 @@ public class SwiftAirplaneModeCheckerPlugin: NSObject, FlutterPlugin {
     }
     
     func checkAirplaneMode(completion: @escaping (String) -> Void){
+
+        var msg: String = ""
+        self.isAirplaneModeOn()? msg = "ON": msg = "OFF"
+        completion(msg)
+
+        /* OLD CODE
         let monitor = NWPathMonitor()
         var msg: String = ""
         
@@ -42,6 +49,17 @@ public class SwiftAirplaneModeCheckerPlugin: NSObject, FlutterPlugin {
         
         let queue = DispatchQueue(label: "Monitor", qos: .default, attributes: .concurrent, autoreleaseFrequency: .inherit, target: nil)
         monitor.start(queue: queue)
+
+        */
         
+    }
+
+    
+func isAirplaneModeOn() -> Bool {
+    let networkInfo = CTTelephonyNetworkInfo()
+        guard let radioAccessTechnology = networkInfo.serviceCurrentRadioAccessTechnology else {
+        return false
+    }
+    return radioAccessTechnology.isEmpty
     }
 }
